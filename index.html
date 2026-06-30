@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JaguarFortress – Ciberseguridad para PyMEs</title>
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png"/>
+<link rel="icon" type="image/x-icon" href="favicon.ico"/>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:   #090909;
+    --steel:   #111111;
+    --amber:   #F5A623;
+    --amber2:  #D4891A;
+    --white:   #E8E8E8;
+    --muted:   #6B6B6B;
+    --danger:  #C0392B;
+    --mono:    'JetBrains Mono', monospace;
+    --display: 'Bebas Neue', sans-serif;
+    --body:    'Inter', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--body);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.9rem 5vw;
+    background: rgba(9,9,9,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(245,166,35,0.15);
+  }
+  .nav-logo {
+    display: flex; align-items: center;
+  }
+  .nav-icon {
+    height: 58px; width: auto;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--amber); }
+  .nav-cta {
+    background: var(--amber); color: var(--black);
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.55rem 1.4rem;
+    text-decoration: none; transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--amber2); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 10rem 5vw 5rem;
+    gap: 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 70% at 65% 50%, rgba(245,166,35,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 0.7rem; letter-spacing: 0.18em;
+    color: var(--amber); text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 2rem; height: 1px; background: var(--amber);
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(3.5rem, 7vw, 6.5rem);
+    line-height: 0.95;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+  }
+  h1 em { color: var(--amber); font-style: normal; }
+  h1 .line-danger { color: var(--danger); }
+
+  .hero-body {
+    font-size: 1rem; line-height: 1.7;
+    color: #9A9A9A; max-width: 42ch;
+    margin-bottom: 2.5rem;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    background: var(--amber); color: var(--black);
+    font-weight: 700; font-size: 0.8rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.9rem 2.2rem;
+    text-decoration: none;
+    position: relative; overflow: hidden;
+    transition: background 0.2s;
+  }
+  .btn-primary:hover { background: var(--amber2); }
+
+  .btn-ghost {
+    display: inline-block;
+    border: 1px solid rgba(245,166,35,0.4); color: var(--amber);
+    font-weight: 600; font-size: 0.8rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.9rem 2.2rem;
+    text-decoration: none; margin-left: 1rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--amber); color: var(--white); }
+
+  /* ASCII JAGUAR */
+  .jaguar-wrap {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .hero-logo {
+    width: min(100%, 480px);
+    height: auto;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 30px rgba(245,166,35,0.15));
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  .jaguar-glow {
+    position: absolute; inset: -40px;
+    background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(245,166,35,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Glitch line */
+  .glitch-bar {
+    position: absolute; left: 0; right: 0;
+    height: 2px; background: var(--amber);
+    opacity: 0;
+    animation: glitch-scan 6s ease-in-out infinite;
+  }
+  @keyframes glitch-scan {
+    0%   { opacity:0; top: 0%; }
+    5%   { opacity:0.7; }
+    45%  { opacity:0.7; top: 100%; }
+    50%  { opacity:0; top: 100%; }
+    100% { opacity:0; top: 0%; }
+  }
+
+  /* Pulse ring */
+  .pulse-ring {
+    position: absolute; width: 300px; height: 300px;
+    border: 1px solid rgba(245,166,35,0.12);
+    border-radius: 50%;
+    animation: pulse 3s ease-out infinite;
+  }
+  .pulse-ring:nth-child(2) { animation-delay: 1s; }
+  .pulse-ring:nth-child(3) { animation-delay: 2s; }
+  @keyframes pulse {
+    0%   { transform: scale(0.6); opacity: 0.6; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  /* ── STATS BAR ── */
+  .stats-bar {
+    background: var(--steel);
+    border-top: 1px solid rgba(245,166,35,0.2);
+    border-bottom: 1px solid rgba(245,166,35,0.2);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    padding: 2rem 5vw;
+  }
+  .stat { text-align: center; padding: 0.5rem; }
+  .stat-num {
+    font-family: var(--display);
+    font-size: 2.8rem; color: var(--amber);
+    letter-spacing: 0.02em; line-height: 1;
+  }
+  .stat-label {
+    font-size: 0.72rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+    margin-top: 0.3rem;
+  }
+  .stat + .stat {
+    border-left: 1px solid rgba(255,255,255,0.05);
+  }
+
+  /* ── SECTION COMMONS ── */
+  section { padding: 6rem 5vw; }
+
+  .section-tag {
+    font-family: var(--mono);
+    font-size: 0.68rem; letter-spacing: 0.2em;
+    color: var(--amber); text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    display: flex; align-items: center; gap: 0.7rem;
+  }
+  .section-tag::before {
+    content: '//'; color: rgba(245,166,35,0.4);
+  }
+
+  h2 {
+    font-family: var(--display);
+    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    line-height: 1; letter-spacing: 0.02em;
+    margin-bottom: 1rem;
+  }
+  h2 span { color: var(--amber); }
+
+  .section-sub {
+    font-size: 0.95rem; color: var(--muted);
+    max-width: 55ch; line-height: 1.7;
+    margin-bottom: 3.5rem;
+  }
+
+  /* ── SERVICES ── */
+  #services { background: var(--steel); }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1px;
+    background: rgba(245,166,35,0.1);
+    border: 1px solid rgba(245,166,35,0.1);
+  }
+
+  .service-card {
+    background: var(--steel);
+    padding: 2.5rem 2rem;
+    position: relative; overflow: hidden;
+    transition: background 0.25s;
+    cursor: default;
+  }
+  .service-card::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 2px; background: var(--amber);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .service-card:hover { background: #161616; }
+  .service-card:hover::after { transform: scaleX(1); }
+
+  .service-icon {
+    font-family: var(--mono);
+    font-size: 1.4rem; color: var(--amber);
+    margin-bottom: 1.2rem;
+    display: block;
+  }
+  .service-title {
+    font-family: var(--display);
+    font-size: 1.6rem; letter-spacing: 0.02em;
+    margin-bottom: 0.8rem;
+  }
+  .service-desc {
+    font-size: 0.875rem; line-height: 1.7;
+    color: var(--muted);
+  }
+  .service-tag {
+    display: inline-block;
+    margin-top: 1.2rem;
+    font-family: var(--mono);
+    font-size: 0.65rem; letter-spacing: 0.12em;
+    color: rgba(245,166,35,0.5);
+    text-transform: uppercase;
+    border: 1px solid rgba(245,166,35,0.2);
+    padding: 0.2rem 0.6rem;
+  }
+
+  /* ── WHY ── */
+  #why { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+
+  .why-list { list-style: none; display: flex; flex-direction: column; gap: 1.5rem; }
+  .why-item {
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 1rem; align-items: start;
+  }
+  .why-num {
+    font-family: var(--mono); font-size: 0.7rem;
+    color: var(--amber); padding-top: 0.15rem;
+    white-space: nowrap;
+  }
+  .why-text strong {
+    display: block; font-size: 0.95rem; font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+  .why-text p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  .why-visual {
+    background: var(--steel);
+    border: 1px solid rgba(245,166,35,0.15);
+    padding: 2rem;
+    font-family: var(--mono); font-size: 0.7rem;
+    line-height: 1.8; color: #3a3a3a;
+    position: relative;
+  }
+  .why-visual .c-amber { color: var(--amber); }
+  .why-visual .c-danger { color: var(--danger); }
+  .why-visual .c-green  { color: #4ade80; }
+  .why-visual .c-muted  { color: #555; }
+  .why-visual-label {
+    position: absolute; top: -1px; left: 1.5rem;
+    background: var(--amber); color: var(--black);
+    font-size: 0.6rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.15rem 0.6rem;
+  }
+  .cursor {
+    display: inline-block; width: 8px; height: 0.9em;
+    background: var(--amber); vertical-align: middle;
+    animation: blink 1s step-start infinite;
+  }
+  @keyframes blink { 50% { opacity:0; } }
+
+  /* ── PROCESS ── */
+  #process { background: var(--steel); }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 0;
+    position: relative;
+  }
+  .process-steps::before {
+    content: '';
+    position: absolute; top: 2rem; left: 12.5%; right: 12.5%;
+    height: 1px; background: rgba(245,166,35,0.3);
+    z-index: 0;
+  }
+  .step {
+    padding: 0 1.5rem 2rem;
+    position: relative; z-index: 1;
+    text-align: center;
+  }
+  .step-dot {
+    width: 4rem; height: 4rem;
+    background: var(--black);
+    border: 1px solid var(--amber);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-family: var(--mono); font-size: 0.75rem;
+    color: var(--amber);
+    position: relative;
+  }
+  .step-title {
+    font-family: var(--display);
+    font-size: 1.3rem; margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+  .step-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── CTA ── */
+  #cta {
+    text-align: center;
+    padding: 8rem 5vw;
+    position: relative; overflow: hidden;
+  }
+  #cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(245,166,35,0.05) 0%, transparent 70%);
+  }
+  #cta h2 { font-size: clamp(2.8rem, 5vw, 5rem); margin-bottom: 1rem; }
+  #cta p { font-size: 1rem; color: var(--muted); max-width: 50ch; margin: 0 auto 2.5rem; }
+
+  .threat-line {
+    font-family: var(--mono);
+    font-size: 0.7rem; color: rgba(245,166,35,0.3);
+    letter-spacing: 0.08em; margin-bottom: 0.5rem;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--steel);
+    border-top: 1px solid rgba(245,166,35,0.15);
+    padding: 2rem 5vw;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo { display: flex; align-items: center; }
+  .footer-icon {
+    height: 46px; width: auto;
+  }
+  .footer-copy { font-size: 0.75rem; color: var(--muted); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a {
+    font-size: 0.75rem; color: var(--muted);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--amber); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; padding-top: 8rem; }
+    .jaguar-wrap { margin-top: 2.5rem; }
+    .jaguar-ascii { display: none; }
+    .pulse-ring { display: none; }
+    .mobile-logo {
+      display: block !important;
+      width: min(85%, 360px);
+      height: auto;
+      margin: 0 auto;
+      filter: drop-shadow(0 0 30px rgba(245,166,35,0.15));
+    }
+    .hero-logo { width: min(80%, 320px); margin: 0 auto; display: block; }
+    #why { grid-template-columns: 1fr; }
+    .why-visual { display: none; }
+    .stats-bar { grid-template-columns: repeat(2,1fr); }
+    .stat + .stat { border-left: none; }
+    .stats-bar .stat:nth-child(3),
+    .stats-bar .stat:nth-child(4) { border-top: 1px solid rgba(255,255,255,0.05); }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .process-steps::before { display: none; }
+    .nav-links { display: none; }
+    .btn-ghost { margin-left: 0; margin-top: 0.9rem; }
+    .btn-primary, .btn-ghost { display: block; text-align: center; }
+  }
+
+  @media (max-width: 540px) {
+    .process-steps { grid-template-columns: 1fr; }
+    nav { padding: 0.6rem 5vw; }
+    .nav-cta { font-size: 0.62rem; padding: 0.45rem 0.8rem; letter-spacing: 0.06em; }
+    .nav-icon { height: 36px; }
+    section { padding: 4rem 6vw; }
+    .stats-bar { padding: 1.5rem 6vw; }
+    .stat-num { font-size: 2.1rem; }
+    footer { flex-direction: column; text-align: center; }
+  }
+
+  @media (max-width: 400px) {
+    .nav-icon { height: 30px; }
+    .nav-cta { font-size: 0.56rem; padding: 0.4rem 0.65rem; }
+  }
+
+  .jaguar-wrap {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .jaguar-ascii {
+    font-family: var(--mono);
+    font-size: clamp(0.38rem, 0.75vw, 0.62rem);
+    line-height: 1.18;
+    color: #2a2a2a;
+    white-space: pre;
+    user-select: none;
+    position: relative;
+  }
+  .jaguar-ascii .amber-char { color: var(--amber); }
+  .jaguar-ascii .bright-char { color: #5a5a5a; }
+  .jaguar-glow {
+    position: absolute; inset: -40px;
+    background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(245,166,35,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .glitch-bar {
+    position: absolute; left: 0; right: 0;
+    height: 2px; background: var(--amber);
+    opacity: 0;
+    animation: glitch-scan 6s ease-in-out infinite;
+  }
+  @keyframes glitch-scan {
+    0%   { opacity:0; top: 0%; }
+    5%   { opacity:0.7; }
+    45%  { opacity:0.7; top: 100%; }
+    50%  { opacity:0; top: 100%; }
+    100% { opacity:0; top: 0%; }
+  }
+  .pulse-ring {
+    position: absolute; width: 300px; height: 300px;
+    border: 1px solid rgba(245,166,35,0.12);
+    border-radius: 50%;
+    animation: pulse 3s ease-out infinite;
+  }
+  .pulse-ring:nth-child(2) { animation-delay: 1s; }
+  .pulse-ring:nth-child(3) { animation-delay: 2s; }
+  @keyframes pulse {
+    0%   { transform: scale(0.6); opacity: 0.6; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glitch-bar, .pulse-ring, .cursor { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="logo.png" alt="JaguarFortress" class="nav-icon"/>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#services">Servicios</a></li>
+    <li><a href="#why">Por qué nosotros</a></li>
+    <li><a href="#process">Proceso</a></li>
+  </ul>
+  <a href="#cta" class="nav-cta">Auditoría gratuita</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-tag">Ciberseguridad ofensiva · Defensa real</div>
+    <h1>
+      TU EMPRESA<br>
+      NO ES<br>
+      <em>INVISIBLE.</em>
+    </h1>
+    <p class="hero-body">
+      Los atacantes no descansan. Nosotros tampoco. JaguarFortress protege a startups y PyMEs con la misma inteligencia táctica que usan quienes intentan vulnerarlas.
+    </p>
+    <a href="#cta" class="btn-primary">Solicitar auditoría gratuita</a>
+    <a href="#services" class="btn-ghost">Ver servicios</a>
+  </div>
+
+  <div class="jaguar-wrap">
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="jaguar-glow"></div>
+    <div class="glitch-bar"></div>
+    <pre class="jaguar-ascii" id="jaguar"></pre>
+    <img src="logo.png" alt="JaguarFortress" class="mobile-logo" style="display:none;"/>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-num">+200</div>
+    <div class="stat-label">Empresas protegidas</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">98%</div>
+    <div class="stat-label">Tasa de detección</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">&lt;24h</div>
+    <div class="stat-label">Respuesta a incidente</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">0</div>
+    <div class="stat-label">Brechas post-auditoría</div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-tag">Servicios</div>
+  <h2>LO QUE <span>HACEMOS</span></h2>
+  <p class="section-sub">Atacamos tu infraestructura antes de que alguien más lo haga. Después la blindamos.</p>
+
+  <div class="services-grid">
+    <div class="service-card">
+      <span class="service-icon">[>_]</span>
+      <div class="service-title">Pentesting</div>
+      <p class="service-desc">Simulamos ataques reales contra tus sistemas, redes y aplicaciones para encontrar las grietas antes que los adversarios.</p>
+      <span class="service-tag">Hacking ético</span>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">[#!]</span>
+      <div class="service-title">Auditorías de seguridad</div>
+      <p class="service-desc">Revisión exhaustiva de tu postura de seguridad: políticas, controles, accesos e infraestructura. Con evidencia, no con suposiciones.</p>
+      <span class="service-tag">Análisis completo</span>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">[🔍]</span>
+      <div class="service-title">Análisis de vulnerabilidades</div>
+      <p class="service-desc">Identificamos, priorizamos y documentamos cada vulnerabilidad con un plan de remediación claro y ejecutable.</p>
+      <span class="service-tag">CVSS · CVE</span>
+    </div>
+    <div class="service-card">
+      <span class="service-icon">[⚡]</span>
+      <div class="service-title">Formación y concienciación</div>
+      <p class="service-desc">Tu equipo es tu primera línea. Entrenamos a tus colaboradores para que reconozcan y neutralicen amenazas como phishing e ingeniería social.</p>
+      <span class="service-tag">Capacitación práctica</span>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div>
+    <div class="section-tag">Por qué nosotros</div>
+    <h2>PIENSO<br>COMO <span>ATACANTE.</span><br>DEFIENDO<br>COMO FORTALEZA.</h2>
+    <p class="section-sub">No vendemos tranquilidad falsa. Vendemos evidencia de que tu empresa puede resistir lo que viene.</p>
+
+    <ul class="why-list">
+      <li class="why-item">
+        <span class="why-num">→ 01</span>
+        <div class="why-text">
+          <strong>Especialistas en PyMEs y startups</strong>
+          <p>Sabemos que no tienes un SOC de 50 personas. Por eso diseñamos protección proporcional a tu tamaño y real en tu contexto.</p>
+        </div>
+      </li>
+      <li class="why-item">
+        <span class="why-num">→ 02</span>
+        <div class="why-text">
+          <strong>Reportes que se entienden</strong>
+          <p>Sin jerga innecesaria. Cada hallazgo viene con su impacto real en pesos y pasos concretos para resolverlo.</p>
+        </div>
+      </li>
+      <li class="why-item">
+        <span class="why-num">→ 03</span>
+        <div class="why-text">
+          <strong>Metodología ofensiva certificada</strong>
+          <p>OWASP, PTES, OSSTMM. Usamos los estándares de la industria, adaptados a tu stack tecnológico.</p>
+        </div>
+      </li>
+      <li class="why-item">
+        <span class="why-num">→ 04</span>
+        <div class="why-text">
+          <strong>Sin contratos eternos</strong>
+          <p>Compromiso por proyecto o retainer mensual. Tú decides qué necesitas y cuándo.</p>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="why-visual">
+    <span class="why-visual-label">LIVE SCAN · jaguarfortress.com</span>
+<span class="c-muted">$ jaguar --target cliente.io --mode full</span>
+
+<span class="c-amber">[ INICIANDO RECONOCIMIENTO ]</span>
+<span class="c-muted">  ↳ subdomains found ............ 14</span>
+<span class="c-muted">  ↳ open ports .................. 7</span>
+<span class="c-danger">  ↳ critical vuln detected ...... 1  ← CVE-2024-3811</span>
+<span class="c-muted">  ↳ outdated services ........... 3</span>
+
+<span class="c-amber">[ ANÁLISIS DE APLICACIÓN ]</span>
+<span class="c-muted">  ↳ SQL injection tests ......... pass</span>
+<span class="c-danger">  ↳ XSS reflected ............... FOUND  ← /search?q=</span>
+<span class="c-muted">  ↳ CSRF protection ............. pass</span>
+<span class="c-danger">  ↳ Broken auth ................. FOUND  ← /api/v1/user</span>
+
+<span class="c-amber">[ GENERANDO REPORTE ]</span>
+<span class="c-green">  ↳ Criticidad Alta ............. 2</span>
+<span class="c-muted">  ↳ Criticidad Media ............ 5</span>
+<span class="c-muted">  ↳ Criticidad Baja ............. 8</span>
+
+<span class="c-amber">  ↳ Reporte enviado. Remediación estimada: 3 días.</span>
+<span class="c-muted">$</span> <span class="cursor"></span>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-tag">Proceso</div>
+  <h2>CÓMO <span>OPERAMOS</span></h2>
+  <p class="section-sub">Cuatro fases. Sin sorpresas. Con resultados medibles.</p>
+
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-dot">SCOUT</div>
+      <div class="step-title">Reconocimiento</div>
+      <p class="step-desc">Mapeamos toda tu superficie de ataque: dominios, IPs, servicios expuestos, tecnologías.</p>
+    </div>
+    <div class="step">
+      <div class="step-dot">STRIKE</div>
+      <div class="step-title">Explotación controlada</div>
+      <p class="step-desc">Ejecutamos ataques reales en entorno controlado para validar cada vulnerabilidad encontrada.</p>
+    </div>
+    <div class="step">
+      <div class="step-dot">REPORT</div>
+      <div class="step-title">Evidencia y prioridades</div>
+      <p class="step-desc">Reporte técnico + ejecutivo con severidad, impacto real y hoja de ruta de remediación.</p>
+    </div>
+    <div class="step">
+      <div class="step-dot">SHIELD</div>
+      <div class="step-title">Fortalecimiento</div>
+      <p class="step-desc">Te acompañamos en la corrección y hacemos una verificación final para confirmar que el vector está cerrado.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="threat-line">AMENAZA ACTIVA DETECTADA · ACCIÓN RECOMENDADA · CONTACTAR A JAGUARFORTRESS</div>
+  <h2>¿LISTO PARA<br><span>CONOCER TUS</span><br>VULNERABILIDADES?</h2>
+  <p>Una auditoría gratuita de 30 minutos para entender tu exposición actual. Sin compromiso. Con datos reales.</p>
+  <a href="mailto:contacto@jaguarfortress.com" class="btn-primary">Agendar auditoría gratuita</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <img src="logo.png" alt="JaguarFortress" class="footer-icon"/>
+  </div>
+  <p class="footer-copy">© 2025 JaguarFortress. Todos los derechos reservados.</p>
+  <div class="footer-links">
+    <a href="#">Privacidad</a>
+    <a href="#">Términos</a>
+    <a href="mailto:contacto@jaguarfortress.com">Contacto</a>
+  </div>
+</footer>
+
+
+<script>
+const art = `
+                                                                                                                                                                
+                                                                            .:++++;,,.                                                                          
+                                                                        ,+***+;:;?%%%?**+:..                                                                    
+                                                                     ,+??*:.::,,....:,:;*?*+++;.                                                                
+                                                                  ,**%+,   ,,.        .:;**;,,;;;:.                                                             
+                                                                ,**;::             .,,,,.        ,:                                                             
+                                                               *S+.,.     ,::,           .,:;;?%*;;+*++*?++;:,            ,::::                                 
+                                                             .?* ;*   ,. ,+:+???*:.   ,+*+*%+*+;*::+?+,:**++*?*?+,   .,;*%?*;::+                                
+                                                          ..,%* +%+.,+:  :: .,:;**?*+;;;:;**;,:+*+;:++;++::*??;:**,+*??*;,,    *                                
+                                                       ,:**;S?:?%. ;*:   ,*. .,:,,,:;;:+?*:+:+S+  .??: .?%*%:.;*:+::;,..,:,   ;+                                
+                                                     :??;, ?+ ,S%;?%. .   :*.  ,;+*, ,+?:.:??;,;*?%;.??S;  :?;:?++?; ,++:.   ;+                                 
+                                                   :??:   *S,;S*:.,+:      ++   ..,,++;;?%?*; .;?;.:+, ;?++*%+;??..;*;,..  .+;                                  
+                                                 ;??;    ;S+*%+ ,  ++,,    +%.   .;?*,:?*. :%?*??::;:+:+%;.,*+  ??+:;*+.   .?+                                  
+                                               :?+,;:.  .%, *S*,.:?*. ..    +* .*?+.,?;,??**?+  *%;.:;,+?*::+*??*..+?.,*, ,*;                                   
+                                             ,?S;.,. .  *;,%*:*%%*;;:.       ,+?+?::??:+?*. ,%**?: +,+:*%,+S.  ;%+:+S?:,?::,                                    
+          ,:.                               +%+,:*.    ,?+%;.  ?:   .:       ,?.;;.*::???%*;:?:+.?+; ++*,;*?,:*?*??;:;,;:%,                                     
+       :**++**,                        ,;.,%S+  :+:,  .S*%+ ..;?  .  ;.      %*;?;++:,  +:;*%S?:.;:  .,;,??%?+:+:  ,:+;+**%.                                    
+      ;*::   *:                     :+*;.+%,:*,::     ?+.?*;;*??*,.,:..     ;%, .?. :+;.??,::,++:. ,:. ,:;;:;,:S;.++, ;%. *+                                    
+     ,S.    ,,                   ,+?+:  ;%. :?*:     +%**?%?+. .,;,.        *? ;;+++*::,.:::   ..;++*?+,,.  .:::,;:,?;+;;.,%                                    
+    .?+;:  :                   .??;,   ?S*++: .:.   +%+,. +;  .  :.  .      ,+,:  ;.,+;:,  ..::;*;,??+.+*:::.  .::;*;:; .:+;                                    
+    ,%    :.                 :*?+.    *?.,?,       *S? ...;?*::;:,.     .,,,,,:,:,,...,,,**+?++;:%:.* +%:+++?*?+.,,.  .,,.:,::,,.                               
+    .%,., :                :**?:     +%  ,+,.     *;:%+;+%%+,.:,:,          ...,,,:,;: +*;:+#?.+??%+,+%?%+.%%+:+?; ,:;::,,,,.                                   
+     +?:, :;            .;??, ,     ;S?::;  ,    *S+*%%+,.;*,    ,  .     .,,..,,,,... :*%?+*S* :;+?%?*++ ?#++?%*: .,,,,,,,,,,.                                 
+     .?.   ;+,       ,++;+?.       :S+,;+       +?,,.?*    .,::+++,     ,,,,........,. +;:+??S#?, .,.:. ,?#%?*++*+ .,.. .....,,..                               
+      .;;:,,::;::+;;*?+  .:. .     S+   ;,     ;?  .;SSS?**+:,   ,::.         .,,,,,....;+*+?%S#S; . ..+S@??*+*+:..,,.,,..                                      
+        :;:.    +:  ,;.  . .      +%;. ,.     :??+*%%*;;*S*:;;;;,    .      ,,..   .,,.  ,:;*??%*+,   ;*%S??*+:.  .,..  .,:.                                    
+          .,:,.::.  ....         ,%+:;;,     :?+:+%*    :S*:...,*+               .,.       ..,, ,,::::::..:,.        ...   .:                                   
+                                .;+   ,.    .?;   ;%;:;?%??%%;;**%?,                     .  .S? :,,,,,,:..#%                ;;                                  
+                               :,*+..,      ,?:  ,++??;++?%;  . .;%%;                    ,.  **          .#;  .           ,. +*                                 
+                              +,.?;:;:      ,*,;;;;*:  . ;S?+:::+???S?+,                  :.  : ,      , .:  ,         .,,:;%+?*                                
+                             ;, *:   ,.      +, ,  :+, .;?+:;?%%+,,.:?%?%*:         ...   .;    :,    .;.   ,,           .;*,.;%;                               
+                            :,  +;. ..        ;,  .,:,:*?, . ,%?,...:?++++%?,    .         ;. .: :,  .,.,,  ;             ;?+, +S:                              
+                           ,:  . .;,           ,:, .   ,*;..+%*+;++%S*;?:  +%,             ,+ .#:.,..,.,#: ;:           ,;++???*?%.                             
+                           ;                .   .::,    .++**;+:  +%++,:+%*+?%+.           .?, ;+:;:::;;+ ,*     ..     ..  .+S, *+                             
+                          ;.     .       ...       .,,.   ;+  .????+,:?*?;.:*?%?*.          ,?+,.,.......+?,       ..        ;??:;%.                            
+                         ::        ......             ,,. ,;:;+*%%. ,?,.?*,,;***%S*,.        .;***?*??***;.          ..    ,:***:+%*                            
+                        .;          ...                   :;;. *%??:;?%**+*S%?:.:*%SS+.         .,.,:,,.               ,.    .??. :S:                           
+                        ;          .                       :++*; .%%%*;;, *SSS*,  .;*%S:                                ,   :::+%*+%S:                          
+                       ;.         .                        *S?:  ?%*%?,  .+%SSS%+.  ,:*%,                                 . :.  *%::;%;                         
+                      :,         ,                        ;S?;  *S%*%S*.  .*%%%???   , :;                                .,  ,:+++?+:*%*:,                      
+                     ;,         .                        ,S?+,  %%%%%?*:   ;:+:,:+;   ;.,                                : .  ;?**+++++;*+:*+;.                 
+                    ;,          ..                       :*::. .?+;;:;;;.  .:  . .+  .S*                                 ,,  ,+**+*?: .*?*+,:??*.               
+                   :. .,   ,  ., .,                      ::. .  +:.   .:,  .. :S, ,   ;*                                  .. .,,   :?, :,,;+ ..+*               
+                  .,  ,.   ,.  ,  .                        +*   ,:  ?;  .     .%*     ,                                    ..   :%  :.  +; : ;: :.              
+                   .  .    .                                %,   .  *%         *:                                               :+  .   ::   :.                 
+                                                            .:       *:       .,                                                                                
+                                                                      ,                                                                                         
+`;
+
+const el = document.getElementById('jaguar');
+const rendered = art.split('').map(ch => {
+  if ('S@#'.includes(ch)) return `<span class="amber-char">${ch}</span>`;
+  if ('?%'.includes(ch))  return `<span style="color:#c47e10">${ch}</span>`;
+  if ('*+'.includes(ch))  return `<span class="bright-char">${ch}</span>`;
+  if (';:'.includes(ch))  return `<span style="color:#383838">${ch}</span>`;
+  return ch;
+}).join('');
+el.innerHTML = rendered;
+
+const amberChars = el.querySelectorAll('.amber-char');
+setInterval(() => {
+  const idx = Math.floor(Math.random() * amberChars.length);
+  const span = amberChars[idx];
+  span.style.opacity = '0.15';
+  setTimeout(() => { span.style.opacity = ''; }, 80 + Math.random() * 140);
+}, 120);
+</script>
+</body>
+</html>
